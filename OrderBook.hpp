@@ -2,16 +2,20 @@
 #include <map>
 #include <deque>
 
-using namespace std;
-
 class OrderBook
 {
 private:
-    map<uint64_t, deque<Order>> asks; // sell orders
-    map<uint64_t, deque<Order>, greater<>> bids; // buy orders
+    std::map<uint64_t, std::deque<Order>> asks; // sell orders
+    std::map<uint64_t, std::deque<Order>, std::greater<>> bids; // buy orders
 public:
     OrderBook(/* args */);
     ~OrderBook();
 
     void storeOrder(Order order);
+
+    void printBids();
+    void printAsks();
+
+private:
+    Order matchOrder(Order order);
 };
