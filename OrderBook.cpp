@@ -9,11 +9,25 @@ OrderBook::~OrderBook()
 {
 }
 
-void OrderBook::storeOrder(Order order)
+void OrderBook::matchOrder(Order order)
 {
-    order = matchOrder(order);
-    if(order.quantity <= 0) return;
+    std::cout << "Match " << order.side << " order: " << order.id << " qty: " << order.quantity << " price: " << order.price << std::endl;
+    if(order.side == BUY) {
+        order = matchBuy(order);
+    }
+    else if(order.side == SELL) {
+        order = matchSell(order);
+    }
 
+    if(order.quantity > 0)
+    {
+        std::cout << "Insert order: " << order.id << " qty: " << order.quantity << " price: " << order.price << std::endl;
+        insert(order);
+    }
+}
+
+void OrderBook::insert(Order order)
+{
     if(order.side == BUY) {
         bids[order.price].push_back(order);
     }
@@ -22,61 +36,61 @@ void OrderBook::storeOrder(Order order)
     }
 }
 
-Order OrderBook::matchOrder(Order order)
+Order OrderBook::matchBuy(Order order)
 {
-    if(order.side == BUY) {
-        while(!asks.empty() && order.quantity > 0)
-        {
-            auto it = asks.begin();
+    while(!asks.empty() && order.quantity > 0)
+    {
+        auto it = asks.begin();
 
-            if(it->first > order.price) { // if no ask that matches the bid
-                break;
-            }
+        if(it->first > order.price) { // if no ask that matches the bid
+            break;
+        }
 
-            auto& queue = it->second;
-            Order& current = queue.front();
+        auto& queue = it->second;
+        Order& current = queue.front();
 
-            uint32_t match_qty = std::min(order.quantity, current.quantity);
+        uint32_t match_qty = std::min(order.quantity, current.quantity);
 
-            order.quantity -= match_qty;
-            current.quantity -= match_qty;
+        order.quantity -= match_qty;
+        current.quantity -= match_qty;
 
-            if(current.quantity == 0) { // ask order quantity == 0, then remove it from queue
-                queue.pop_front();
-                if(queue.empty())
-                {
-                    asks.erase(it); // erase price from asks map
-                }
+        if(current.quantity == 0) { // ask order quantity == 0, then remove it from queue
+            queue.pop_front();
+            if(queue.empty())
+            {
+                asks.erase(it); // erase price from asks map
             }
         }
     }
-    else if(order.side == SELL) {
-        while(!bids.empty() && order.quantity > 0)
-        {
-            auto it = bids.begin();
+    return order;
+}
 
-            if(it->first < order.price || order.quantity == 0) { // if no bid that matches the ask
-                break;
-            }
+Order OrderBook::matchSell(Order order)
+{
+    while(!bids.empty() && order.quantity > 0)
+    {
+        auto it = bids.begin();
 
-            auto& queue = it->second;
-            Order& current = queue.front();
+        if(it->first < order.price) { // if no bid that matches the ask
+            break;
+        }
 
-            uint32_t match_qty = std::min(order.quantity, current.quantity);
+        auto& queue = it->second;
+        Order& current = queue.front();
 
-            order.quantity -= match_qty;
-            current.quantity -= match_qty;
+        uint32_t match_qty = std::min(order.quantity, current.quantity);
 
-            if(current.quantity == 0) { // bid order quantity == 0, then remove it from queue
-                queue.pop_front();
-                if(queue.empty())
-                {
-                    bids.erase(it); // erase price from bids map
-                }
+        order.quantity -= match_qty;
+        current.quantity -= match_qty;
+
+        if(current.quantity == 0) { // bid order quantity == 0, then remove it from queue
+            queue.pop_front();
+            if(queue.empty())
+            {
+                bids.erase(it); // erase price from bids map
             }
         }
     }
- 
     return order;
 }
 

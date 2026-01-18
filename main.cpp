@@ -18,7 +18,7 @@ int main() {
     OrderBook orderBook;
 
     // create fake orders
-    int num = 20;
+    int num = 50;
     std::cout << "Creating " << num << " fake orders..." << std::endl;
     for (int i = 1; i <= num; ++i) {
         Order order = {
@@ -28,7 +28,7 @@ int main() {
             static_cast<uint32_t>(50 + (i%5) * 5) // quantity
         };
         
-        orderBook.storeOrder(order);
+        orderBook.matchOrder(order);
     }
     std::cout << "Created " << num << " orders" << std::endl;
 

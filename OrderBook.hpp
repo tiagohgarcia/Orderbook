@@ -11,11 +11,14 @@ public:
     OrderBook(/* args */);
     ~OrderBook();
 
-    void storeOrder(Order order);
+    void matchOrder(Order order);
 
     void printBids();
     void printAsks();
 
 private:
-    Order matchOrder(Order order);
+    Order matchBuy(Order order);
+    Order matchSell(Order order);
+
+    void insert(Order order);
 };
