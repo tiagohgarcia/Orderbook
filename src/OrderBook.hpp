@@ -5,8 +5,8 @@
 class OrderBook
 {
 private:
-    std::map<uint64_t, std::deque<Order>> asks; // sell orders
-    std::map<uint64_t, std::deque<Order>, std::greater<>> bids; // buy orders
+    std::map<uint64_t, std::list<Order>> asks; // sell orders
+    std::map<uint64_t, std::list<Order>, std::greater<>> bids; // buy orders
 public:
     OrderBook(/* args */);
     ~OrderBook();

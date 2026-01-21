@@ -11,7 +11,7 @@ OrderBook::~OrderBook()
 
 void OrderBook::matchOrder(Order order)
 {
-    std::cout << "Match " << order.side << " order: " << order.id << " qty: " << order.quantity << " price: " << order.price << std::endl;
+    //std::cout << "Match " << order.side << " order: " << order.id << " qty: " << order.quantity << " price: " << order.price << std::endl;
     if(order.side == BUY) {
         order = matchBuy(order);
     }
@@ -21,7 +21,7 @@ void OrderBook::matchOrder(Order order)
 
     if(order.quantity > 0)
     {
-        std::cout << "Insert order: " << order.id << " qty: " << order.quantity << " price: " << order.price << std::endl;
+        //std::cout << "Insert order: " << order.id << " qty: " << order.quantity << " price: " << order.price << std::endl;
         insert(order);
     }
 }
