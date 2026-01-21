@@ -46,17 +46,17 @@ Order OrderBook::matchBuy(Order order)
             break;
         }
 
-        auto& queue = it->second;
-        Order& current = queue.front();
+        auto& list = it->second;
+        Order& current = list.front();
 
         uint32_t match_qty = std::min(order.quantity, current.quantity);
 
         order.quantity -= match_qty;
         current.quantity -= match_qty;
 
-        if(current.quantity == 0) { // ask order quantity == 0, then remove it from queue
-            queue.pop_front();
-            if(queue.empty())
+        if(current.quantity == 0) { // ask order quantity == 0, then remove it from list
+            list.pop_front();
+            if(list.empty())
             {
                 asks.erase(it); // erase price from asks map
             }
@@ -75,17 +75,17 @@ Order OrderBook::matchSell(Order order)
             break;
         }
 
-        auto& queue = it->second;
-        Order& current = queue.front();
+        auto& list = it->second;
+        Order& current = list.front();
 
         uint32_t match_qty = std::min(order.quantity, current.quantity);
 
         order.quantity -= match_qty;
         current.quantity -= match_qty;
 
-        if(current.quantity == 0) { // bid order quantity == 0, then remove it from queue
-            queue.pop_front();
-            if(queue.empty())
+        if(current.quantity == 0) { // bid order quantity == 0, then remove it from list
+            list.pop_front();
+            if(list.empty())
             {
                 bids.erase(it); // erase price from bids map
             }

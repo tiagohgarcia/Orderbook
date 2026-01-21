@@ -64,7 +64,7 @@ Time priority is a reward for being earlier
 
 # Phase 2 - part 1
 
-[ ] Change deque → list
-[ ] Introduce OrderLocation and index map
-[ ] Write cancel(id) and tests
-[ ] Run tests until boring
+- [x] Change deque → list
+- [ ] Introduce OrderLocation and index map
+- [ ] Write cancel(id) and tests
+- [ ] Run tests until boring

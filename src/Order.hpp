@@ -1,6 +1,8 @@
+#pragma once
+
 #include <cstdint>
 
-enum Side {
+enum Side : uint8_t {
     BUY,
     SELL
 };
