@@ -2,7 +2,7 @@ CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -g
 
 SRC = src/OrderBook.cpp
-TESTS = tests/TestMain.cpp tests/TestCancel.cpp
+TESTS = tests/TestMain.cpp tests/TestCancel.cpp tests/TestModify.cpp
 
 TARGET = test_order_book
 

@@ -27,7 +27,13 @@ void OrderBook::matchOrder(Order order) {
 bool OrderBook::cancelOrder(uint16_t orderId) {
     auto it = index.find(orderId);
     if(it == index.end()) return false; // order id does not exist
+    
+    cancelByIterator(it);
 
+    return true;
+}
+
+void OrderBook::cancelByIterator(IndexIterator it) {
     OrderLocation& location =  it->second;
     if(location.side == BUY) {
         auto itSide = bids.find(location.price); // get iterator for element in map
@@ -51,6 +57,28 @@ bool OrderBook::cancelOrder(uint16_t orderId) {
     }
 
     index.erase(it);
+}
+
+bool OrderBook::modifyQuantity(uint16_t orderId, uint32_t quantity) {
+    if(quantity == 0) return false;
+    
+    auto it = index.find(orderId);
+    if(it == index.end()) return false; // order id does not exist
+
+    OrderLocation& location =  it->second;
+    uint64_t price = location.price;
+    Side side = location.side;
+
+    cancelByIterator(it); // call cancel order to delete it from the book
+
+    Order order = {
+        orderId,
+        side,
+        price,
+        quantity
+    };
+
+    matchOrder(order);
 
     return true;
 }
