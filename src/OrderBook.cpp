@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cassert>
 #include "OrderBook.hpp"
 
 OrderBook::OrderBook(/* args */)
@@ -29,10 +30,30 @@ void OrderBook::matchOrder(Order order)
 void OrderBook::insert(Order order)
 {
     if(order.side == BUY) {
-        bids[order.price].push_back(order);
+        // insert in book map
+        auto it = bids[order.price].insert(
+            bids[order.price].end(), 
+            order);
+
+        // insert in index map
+        index[order.id] = OrderLocation {
+            order.side,
+            order.price,
+            it
+        };
     }
-    else if(order.side == SELL) {
-        asks[order.price].push_back(order);
+    else if (order.side == SELL) {
+        // insert in book map
+        auto it = asks[order.price].insert(
+            asks[order.price].end(), 
+            order);
+
+        // insert in index map
+        index[order.id] = OrderLocation {
+            order.side,
+            order.price,
+            it
+        };
     }
 }
 
@@ -55,6 +76,10 @@ Order OrderBook::matchBuy(Order order)
         current.quantity -= match_qty;
 
         if(current.quantity == 0) { // ask order quantity == 0, then remove it from list
+            auto itIndex = index.find(current.id); // remove id from index map
+            assert(itIndex != index.end());
+            index.erase(itIndex);
+            
             list.pop_front();
             if(list.empty())
             {
@@ -84,6 +109,10 @@ Order OrderBook::matchSell(Order order)
         current.quantity -= match_qty;
 
         if(current.quantity == 0) { // bid order quantity == 0, then remove it from list
+            auto itIndex = index.find(current.id); // remove id from index map
+            assert(itIndex != index.end());
+            index.erase(itIndex);
+            
             list.pop_front();
             if(list.empty())
             {
