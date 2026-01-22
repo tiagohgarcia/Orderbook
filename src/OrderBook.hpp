@@ -5,8 +5,7 @@
 #include "Order.hpp"
 #include "OrderLocation.hpp"
 
-class OrderBook
-{
+class OrderBook {
 private:
     std::map<uint64_t, std::list<Order>> asks; // sell orders
     std::map<uint64_t, std::list<Order>, std::greater<>> bids; // buy orders
@@ -16,10 +15,14 @@ public:
     ~OrderBook();
 
     void matchOrder(Order order);
+    bool cancelOrder(uint16_t orderId);
 
     void printBids();
     void printAsks();
 
+    // helpers
+    bool empty() const;
+    bool hasOrder(uint16_t orderId) const;
 private:
     Order matchBuy(Order order);
     Order matchSell(Order order);

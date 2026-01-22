@@ -27,7 +27,7 @@ Time priority is a reward for being earlier
 - Every modification will put the order at the back of the FIFO
 
 
-## Testing
+## Testing Cancel
 
 1. Testing cancel correctness
 
@@ -41,7 +41,7 @@ Time priority is a reward for being earlier
     5. if the price level becomes empty, it was removed
 
 
-## Implementation
+## Implementation Cancel
 
 1. Cancel flow
 
@@ -66,5 +66,4 @@ Time priority is a reward for being earlier
 
 - [x] Change deque → list
 - [x] Introduce OrderLocation and index map
-- [ ] Write cancel(id) and tests
-- [ ] Run tests until boring
+- [x] Write cancel(id) and tests

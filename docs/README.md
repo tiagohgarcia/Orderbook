@@ -35,6 +35,6 @@
 - Maintain multiple indices consistently
 - Design correct mutable systems
 ----------------------------------
-- [ ] Create order location
+- [x] Create order location
 - [ ] Cancel order
 - [ ] Modify order

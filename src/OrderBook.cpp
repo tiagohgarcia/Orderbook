@@ -2,16 +2,13 @@
 #include <cassert>
 #include "OrderBook.hpp"
 
-OrderBook::OrderBook(/* args */)
-{
+OrderBook::OrderBook(/* args */) {
 }
 
-OrderBook::~OrderBook()
-{
+OrderBook::~OrderBook() {
 }
 
-void OrderBook::matchOrder(Order order)
-{
+void OrderBook::matchOrder(Order order) {
     //std::cout << "Match " << order.side << " order: " << order.id << " qty: " << order.quantity << " price: " << order.price << std::endl;
     if(order.side == BUY) {
         order = matchBuy(order);
@@ -27,8 +24,38 @@ void OrderBook::matchOrder(Order order)
     }
 }
 
-void OrderBook::insert(Order order)
-{
+bool OrderBook::cancelOrder(uint16_t orderId) {
+    auto it = index.find(orderId);
+    if(it == index.end()) return false;
+
+    OrderLocation& location =  it->second;
+    if(location.side == BUY) {
+        auto itSide = bids.find(location.price); // get iterator for element in map
+        assert(itSide != bids.end()); // assert it exists
+        
+        itSide->second.erase(location.it); // delete from Order list
+        if(itSide->second.empty()) // if list becomes empty
+        {
+            bids.erase(itSide); // delete price level from map
+        }
+    }
+    else if(location.side == SELL) {
+        auto itSide = asks.find(location.price);
+        assert(itSide != asks.end());
+
+        itSide->second.erase(location.it);
+        if(itSide->second.empty())
+        {
+            asks.erase(itSide);
+        }
+    }
+
+    index.erase(it);
+
+    return true;
+}
+
+void OrderBook::insert(Order order) {
     if(order.side == BUY) {
         // insert in book map
         auto it = bids[order.price].insert(
@@ -57,8 +84,7 @@ void OrderBook::insert(Order order)
     }
 }
 
-Order OrderBook::matchBuy(Order order)
-{
+Order OrderBook::matchBuy(Order order) {
     while(!asks.empty() && order.quantity > 0)
     {
         auto it = asks.begin();
@@ -90,8 +116,7 @@ Order OrderBook::matchBuy(Order order)
     return order;
 }
 
-Order OrderBook::matchSell(Order order)
-{
+Order OrderBook::matchSell(Order order) {
     while(!bids.empty() && order.quantity > 0)
     {
         auto it = bids.begin();
@@ -123,8 +148,7 @@ Order OrderBook::matchSell(Order order)
     return order;
 }
 
-void OrderBook::printBids()
-{
+void OrderBook::printBids() {
     std::cout << "\n---- BIDS ----\n" << std::endl;
     std::cout << "Price  |  Quantity" << std::endl;
     std::cout << "-------|----------" << std::endl;
@@ -140,8 +164,7 @@ void OrderBook::printBids()
     }
 }
 
-void OrderBook::printAsks()
-{
+void OrderBook::printAsks() {
     std::cout << "\n---- ASKS ----\n" << std::endl;
     std::cout << "Price  |  Quantity" << std::endl;
     std::cout << "-------|----------" << std::endl;
@@ -154,4 +177,16 @@ void OrderBook::printAsks()
 
         std::cout << price << "   |  " << qty << std::endl;
     }
+}
+
+bool OrderBook::empty() const {
+    if(bids.empty() && asks.empty()) return true;
+
+    return false;
+}
+
+bool OrderBook::hasOrder(uint16_t orderId) const {
+    if(index.find(orderId) != index.end()) return true;
+
+    return false;
 }
