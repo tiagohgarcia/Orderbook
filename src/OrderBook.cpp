@@ -26,7 +26,7 @@ void OrderBook::matchOrder(Order order) {
 
 bool OrderBook::cancelOrder(uint16_t orderId) {
     auto it = index.find(orderId);
-    if(it == index.end()) return false;
+    if(it == index.end()) return false; // order id does not exist
 
     OrderLocation& location =  it->second;
     if(location.side == BUY) {

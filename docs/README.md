@@ -36,5 +36,5 @@
 - Design correct mutable systems
 ----------------------------------
 - [x] Create order location
-- [ ] Cancel order
+- [x] Cancel order
 - [ ] Modify order

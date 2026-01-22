@@ -27,7 +27,7 @@ Time priority is a reward for being earlier
 - Every modification will put the order at the back of the FIFO
 
 
-## Testing Cancel
+## Testing
 
 1. Testing cancel correctness
 
@@ -40,8 +40,27 @@ Time priority is a reward for being earlier
     4. book invariants still hold
     5. if the price level becomes empty, it was removed
 
+2. Testing modify quantity
 
-## Implementation Cancel
+- Precondition: two orders at the same price level (A and B)
+- Action: modify(id of A)
+- Postconditions:
+    1. Modify returns true
+    2. Index still contains id of A
+    3. book contains A behind order B in FIFO
+    4. price level still exists
+
+3. Testing modify price
+
+- Precondition: two orders at the different price levels (A and B)
+- Action: modify(id of A) -> to match B price level
+- Postconditions:
+    1. Modify returns true
+    2. Index still contains id of A
+    3. book contains A behind order B in FIFO
+    4. old price level of A was deleted
+
+## Implementation
 
 1. Cancel flow
 
@@ -62,8 +81,23 @@ Time priority is a reward for being earlier
         2. Cancel partially filled order
         3. Cancel the last order at a price level
 
+2. Modify flow
+
+    - A modified order is treated as a new order and re-enters the matching flow
+
+    1. Lookup id in index
+    2. if not found → return "not modified" (false)
+    3. Read OrderLocation (side, price, iterator)
+    4. Use side and price to access the correct price-level FIFO container
+    5. Erase using iterator
+    6. If FIFO becomes empty → erase price level
+    7. Create new order with modified fields
+    8. Submit new order through matchOrder
+    9. Return "modified" (true)
+
 # Phase 2 - part 1
 
 - [x] Change deque → list
 - [x] Introduce OrderLocation and index map
 - [x] Write cancel(id) and tests
+- [ ] Write modify(id) and tests
