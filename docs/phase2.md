@@ -100,4 +100,4 @@ Time priority is a reward for being earlier
 - [x] Change deque → list
 - [x] Introduce OrderLocation and index map
 - [x] Write cancel(id) and tests
-- [ ] Write modify(id) and tests
+- [x] Write modify(id) and tests

@@ -6,6 +6,8 @@ void testCancelNonExistentOrder();
 
 void testModifyQuantityRestingOrder();
 void testModifyPriceRestingOrder();
+void testModifyPriceNonExistentOrder();
+void testModifyPriceRestingOrderWithImmediateFullMatch();
 
 int main() {
 
@@ -17,6 +19,8 @@ int main() {
     // modify tests
     testModifyQuantityRestingOrder();
     testModifyPriceRestingOrder();
+    testModifyPriceNonExistentOrder();
+    testModifyPriceRestingOrderWithImmediateFullMatch();
 
     std::cout << "All tests passed!!" << std::endl;
 }

@@ -97,3 +97,44 @@ void testModifyPriceRestingOrder() {
     assert(!book.hasOrder(order1.id));
     assert(book.empty());
 }
+
+void testModifyPriceNonExistentOrder() {
+    OrderBook book;
+
+    bool ok = book.modifyPrice(1, 20);
+
+    assert(!ok);
+    assert(!book.hasOrder(1));
+    assert(book.empty());
+}
+
+void testModifyPriceRestingOrderWithImmediateFullMatch() {
+    OrderBook book;
+
+    Order order1 = {
+        1,
+        BUY,
+        10,
+        50
+    };
+
+    Order order2 = {
+        2,
+        SELL,
+        20,
+        50
+    };
+
+    book.matchOrder(order1);
+    book.matchOrder(order2);
+
+    assert(book.hasOrder(order1.id));
+    assert(book.hasOrder(order2.id));
+
+    bool ok = book.modifyPrice(order1.id, 20);
+
+    assert(ok);
+    assert(!book.hasOrder(order1.id)); // immediate match of order1 with order2, so they dont exist in the book anymore
+    assert(!book.hasOrder(order2.id));
+    assert(book.empty());
+}

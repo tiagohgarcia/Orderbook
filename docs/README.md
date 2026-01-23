@@ -37,4 +37,4 @@
 ----------------------------------
 - [x] Create order location
 - [x] Cancel order
-- [ ] Modify order
+- [x] Modify order

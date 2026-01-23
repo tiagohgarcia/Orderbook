@@ -20,6 +20,7 @@ public:
     void matchOrder(Order order);
     bool cancelOrder(uint16_t orderId);
     bool modifyQuantity(uint16_t orderId, uint32_t quantity);
+    bool modifyPrice(uint16_t orderId, uint64_t price);
 
     void printBids();
     void printAsks();

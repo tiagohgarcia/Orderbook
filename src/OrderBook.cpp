@@ -83,6 +83,30 @@ bool OrderBook::modifyQuantity(uint16_t orderId, uint32_t quantity) {
     return true;
 }
 
+bool OrderBook::modifyPrice(uint16_t orderId, uint64_t price) {
+    if(price == 0) return false;
+
+    auto it = index.find(orderId);
+    if(it == index.end()) return false;
+
+    OrderLocation& location =  it->second;
+    Side side = location.side;
+    uint32_t quantity = location.it->quantity;
+
+    cancelByIterator(it);
+
+    Order order = {
+        orderId,
+        side,
+        price,
+        quantity
+    };
+
+    matchOrder(order);
+
+    return true;
+}
+
 void OrderBook::insert(Order order) {
     if(order.side == BUY) {
         // insert in book map
