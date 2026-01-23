@@ -38,3 +38,12 @@
 - [x] Create order location
 - [x] Cancel order
 - [x] Modify order
+
+## Phase 3
+
+- optimize for efficient structures
+- measure "time per match", "time per insert", "time per cancel"
+- preserve invariants (price-time priority, deterministic)
+----------------------------------
+- [ ] Measure times
+- [ ] Optimize for Flat price levels + intrusive FIFO
