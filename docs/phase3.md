@@ -43,7 +43,80 @@
     - Match latency
     - Latency tail (p99+)
 
+**Invariants:**
+- Price–time priority is preserved
+- FIFO order is preserved within a price level
+- Cancel and modify remain O(1)
+- Phase-2 tests pass unchanged
+- Deterministic outcomes for identical input
+
+**Outcomes:**
+
+Expected:
+- Match latency decreases noticeably
+- Tail latency tightens
+
+Possible:
+- Insert latency slightly worse
+
+Unacceptable:
+- Non-deterministic behavior
+- Cancel complexity regression
+- Test instability
+
 ## Change price level indexing
 
 > **What do I gain and what do I lose?**
 
+## Price Level Indexing
+
+**current**:
+- Ordered tree
+- O(log n) inserts
+- Pointer-heavy traversal
+
+**Hypothesis:**
+- Matching benefits from cache-friendly sequential access
+- inserts may become more expensive
+- Overall throughput improves under realistic flows
+
+## Measurement
+
+**Metrics:**
+- Time per match
+- Time per insert
+- Time per cancel
+- Latency distribution (not just average)
+
+> All benchmarks will be run after warm-up to avoid allocator and cache cold-start artifacts.
+
+**Workload assumptions:**
+- Ratio of market vs limit orders
+- Typical book depth
+- Price distribution
+- Cancel/modify frequency
+
+**Questions to answer:**
+Q: Which operation improved the most?
+A:
+
+Q: Which got worse?
+A:
+
+Q: Did tail latency improve?
+A:
+
+Q: Was deterministic preserved?
+A:
+
+| Before | After |
+| ----------- | ----------- |
+|  |  |
+|  |  |
+
+## Non-goals of Phase 3
+
+- No threading
+- No lock-free structures
+- No semantic changes
+- No feature additions
