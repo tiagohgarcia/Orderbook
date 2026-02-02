@@ -1,18 +1,26 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -g
+CXXFLAGS = -std=c++20 -Wall -Wextra
 
 SRC = src/OrderBook.cpp
 TESTS = tests/TestMain.cpp tests/TestCancel.cpp tests/TestModify.cpp
+BENCH = benchmarks/BenchOrderBook.cpp
 
-TARGET = test_order_book
+TESTSFILE = test_order_book
+BENCHFILE = bench_order_book
 
-all: $(TARGET)
-
-$(TARGET): $(SRC) $(TESTS)
+$(TESTSFILE): $(SRC) $(TESTS)
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
-run: $(TARGET)
-	./$(TARGET)
+test: $(TESTSFILE)
+	./$(TESTSFILE)
+
+
+$(BENCHFILE): $(SRC) $(BENCH)
+	$(CXX) -O3 -DNDEBUG $(CXXFLAGS) $^ -o $@
+
+bench: $(BENCHFILE)
+	./$(BENCHFILE)
 
 clean:
-	rm -f $(TARGET)
+	rm -f $(TESTSFILE)
+	rm -f $(BENCHFILE)
