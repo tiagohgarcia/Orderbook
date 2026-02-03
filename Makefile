@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++20 -Wall -Wextra
+CXXFLAGS = -std=c++20 -Wall -Wextra	
 
 SRC = src/OrderBook.cpp
 TESTS = tests/TestMain.cpp tests/TestCancel.cpp tests/TestModify.cpp
@@ -13,8 +13,7 @@ $(TESTSFILE): $(SRC) $(TESTS)
 
 test: $(TESTSFILE)
 	./$(TESTSFILE)
-
-
+	
 $(BENCHFILE): $(SRC) $(BENCH)
 	$(CXX) -O3 -DNDEBUG $(CXXFLAGS) $^ -o $@
 

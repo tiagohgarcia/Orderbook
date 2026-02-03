@@ -119,22 +119,60 @@ Stats benchmarkInsert(size_t depth) {
     return computeStats(samples);
 }
 
+Stats benchmarkCancel(size_t depth) {
+    std::vector<uint64_t> samples;
+    samples.reserve(depth);
+
+    OrderBook book;
+
+    for (uint32_t j = 0; j < depth; ++j) {
+        Order order {
+            static_cast<uint16_t>(j),
+            SELL,
+            100,
+            10
+        };
+
+        book.matchOrder(order);
+    }
+
+    for (uint32_t j = 0; j < depth; ++j) {
+        auto t0 = Clock::now();
+        book.cancelOrder(static_cast<uint16_t>(j));
+        auto t1 = Clock::now();
+
+        samples.push_back(
+            std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count()
+        );
+    }
+
+    return computeStats(samples);
+}
+
 int main() {
-    auto stats = benchmarkMatch(100, 10);
+    size_t depth = 100;
+    uint32_t qty = 10;
+
+    auto stats = benchmarkMatch(depth, qty);
     printStats("match depth=100", stats);
-
-    stats = benchmarkMatch(1000, 10);
-    printStats("match depth=1000", stats);
-
-    stats = benchmarkMatch(10000, 10);
-    printStats("match depth=10000", stats);
-
-    stats = benchmarkInsert(100);
+    stats = benchmarkInsert(depth);
     printStats("insert depth=100", stats);
+    stats = benchmarkCancel(depth);
+    printStats("cancel depth=100", stats);
 
-    stats = benchmarkInsert(1000);
+    depth = 1000;
+    stats = benchmarkMatch(depth, qty);
+    printStats("match depth=1000", stats);
+    stats = benchmarkInsert(depth);
     printStats("insert depth=1000", stats);
+    stats = benchmarkCancel(depth);
+    printStats("cancel depth=1000", stats);
 
+    depth = 10000;
+    stats = benchmarkMatch(depth, qty);
+    printStats("match depth=10000", stats);
     stats = benchmarkInsert(10000);
     printStats("insert depth=10000", stats);
+    stats = benchmarkCancel(depth);
+    printStats("cancel depth=10000", stats);
 }
