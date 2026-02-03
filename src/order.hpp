@@ -12,5 +12,6 @@ struct Order {
     Side side;
     uint64_t price;
     uint32_t quantity;
+    Order* prev = nullptr;
+    Order* next = nullptr;
 };
-

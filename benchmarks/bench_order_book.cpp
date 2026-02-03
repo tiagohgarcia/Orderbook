@@ -4,7 +4,7 @@
 #include <iostream>
 #include <cassert>
 
-#include "../src/OrderBook.hpp"
+#include "../src/order_book.hpp"
 
 using Clock = std::chrono::steady_clock;
 
@@ -16,7 +16,7 @@ struct Stats {
     double max_us = 0;
 };
 
-static Stats computeStats(std::vector<uint64_t>& samples_ns) {
+static Stats compute_stats(std::vector<uint64_t>& samples_ns) {
     std::sort(samples_ns.begin(), samples_ns.end());
     auto n = samples_ns.size();
 
@@ -39,7 +39,7 @@ static Stats computeStats(std::vector<uint64_t>& samples_ns) {
     return s;
 }
 
-static void printStats(const char* name, const Stats& s) {
+static void print_stats(const char* name, const Stats& s) {
     std::cout << name << ": \n"
               << " mean(us) = " << s.mean_us << "\n"
               << " p50 = " << s.p50_us << "\n"
@@ -49,7 +49,7 @@ static void printStats(const char* name, const Stats& s) {
               << "\n\n";
 }
 
-Stats benchmarkMatch(size_t depth, uint32_t qtyEach) {
+Stats benchmark_match(size_t depth, uint32_t qty_each) {
     const uint64_t price = 100;
     const size_t iters = 300;   // start small, scale later
 
@@ -65,24 +65,24 @@ Stats benchmarkMatch(size_t depth, uint32_t qtyEach) {
                 static_cast<uint16_t>(j),
                 SELL,
                 price,
-                qtyEach
+                qty_each
             };
-            book.matchOrder(sell); // rests
+            book.match_order(sell); // rests
         }
 
-        size_t total = depth * qtyEach;
+        size_t total = depth * qty_each;
         assert(total <= std::numeric_limits<uint32_t>::max());
-        uint32_t totalQty = static_cast<uint32_t>(total);
+        uint32_t total_qty = static_cast<uint32_t>(total);
 
         Order buy {
             9999,
             BUY,
             UINT64_MAX,           // sentinel market price
-            totalQty
+            total_qty
         };
 
         auto t0 = Clock::now();
-        book.matchOrder(buy);
+        book.match_order(buy);
         auto t1 = Clock::now();
 
         samples.push_back(
@@ -90,10 +90,10 @@ Stats benchmarkMatch(size_t depth, uint32_t qtyEach) {
         );
     }
 
-    return computeStats(samples);
+    return compute_stats(samples);
 }
 
-Stats benchmarkInsert(size_t depth) {
+Stats benchmark_insert(size_t depth) {
     std::vector<uint64_t> samples;
     samples.reserve(depth);
 
@@ -108,7 +108,7 @@ Stats benchmarkInsert(size_t depth) {
         };
 
         auto t0 = Clock::now();
-        book.matchOrder(order);
+        book.match_order(order);
         auto t1 = Clock::now();
 
         samples.push_back(
@@ -116,10 +116,10 @@ Stats benchmarkInsert(size_t depth) {
         );
     }
 
-    return computeStats(samples);
+    return compute_stats(samples);
 }
 
-Stats benchmarkCancel(size_t depth) {
+Stats benchmark_cancel(size_t depth) {
     std::vector<uint64_t> samples;
     samples.reserve(depth);
 
@@ -133,12 +133,12 @@ Stats benchmarkCancel(size_t depth) {
             10
         };
 
-        book.matchOrder(order);
+        book.match_order(order);
     }
 
     for (uint32_t j = 0; j < depth; ++j) {
         auto t0 = Clock::now();
-        book.cancelOrder(static_cast<uint16_t>(j));
+        book.cancel_order(static_cast<uint16_t>(j));
         auto t1 = Clock::now();
 
         samples.push_back(
@@ -146,33 +146,33 @@ Stats benchmarkCancel(size_t depth) {
         );
     }
 
-    return computeStats(samples);
+    return compute_stats(samples);
 }
 
 int main() {
     size_t depth = 100;
     uint32_t qty = 10;
 
-    auto stats = benchmarkMatch(depth, qty);
-    printStats("match depth=100", stats);
-    stats = benchmarkInsert(depth);
-    printStats("insert depth=100", stats);
-    stats = benchmarkCancel(depth);
-    printStats("cancel depth=100", stats);
+    auto stats = benchmark_match(depth, qty);
+    print_stats("match depth=100", stats);
+    stats = benchmark_insert(depth);
+    print_stats("insert depth=100", stats);
+    stats = benchmark_cancel(depth);
+    print_stats("cancel depth=100", stats);
 
     depth = 1000;
-    stats = benchmarkMatch(depth, qty);
-    printStats("match depth=1000", stats);
-    stats = benchmarkInsert(depth);
-    printStats("insert depth=1000", stats);
-    stats = benchmarkCancel(depth);
-    printStats("cancel depth=1000", stats);
+    stats = benchmark_match(depth, qty);
+    print_stats("match depth=1000", stats);
+    stats = benchmark_insert(depth);
+    print_stats("insert depth=1000", stats);
+    stats = benchmark_cancel(depth);
+    print_stats("cancel depth=1000", stats);
 
     depth = 10000;
-    stats = benchmarkMatch(depth, qty);
-    printStats("match depth=10000", stats);
-    stats = benchmarkInsert(10000);
-    printStats("insert depth=10000", stats);
-    stats = benchmarkCancel(depth);
-    printStats("cancel depth=10000", stats);
+    stats = benchmark_match(depth, qty);
+    print_stats("match depth=10000", stats);
+    stats = benchmark_insert(10000);
+    print_stats("insert depth=10000", stats);
+    stats = benchmark_cancel(depth);
+    print_stats("cancel depth=10000", stats);
 }

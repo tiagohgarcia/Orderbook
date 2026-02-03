@@ -1,9 +1,9 @@
 CXX = g++
 CXXFLAGS = -std=c++20 -Wall -Wextra	
 
-SRC = src/OrderBook.cpp
-TESTS = tests/TestMain.cpp tests/TestCancel.cpp tests/TestModify.cpp
-BENCH = benchmarks/BenchOrderBook.cpp
+SRC = src/order_book.cpp
+TESTS = tests/test_main.cpp tests/test_cancel.cpp tests/test_modify.cpp
+BENCH = benchmarks/bench_order_book.cpp
 
 TESTSFILE = test_order_book
 BENCHFILE = bench_order_book

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cassert>
-#include "OrderBook.hpp"
+#include "order_book.hpp"
 
 OrderBook::OrderBook(/* args */) {
 }
@@ -8,13 +8,13 @@ OrderBook::OrderBook(/* args */) {
 OrderBook::~OrderBook() {
 }
 
-void OrderBook::matchOrder(Order order) {
+void OrderBook::match_order(Order order) {
     //std::cout << "Match " << order.side << " order: " << order.id << " qty: " << order.quantity << " price: " << order.price << std::endl;
     if(order.side == BUY) {
-        order = matchBuy(order);
+        order = match_buy(order);
     }
     else if(order.side == SELL) {
-        order = matchSell(order);
+        order = match_sell(order);
     }
 
     if(order.quantity > 0)
@@ -24,42 +24,42 @@ void OrderBook::matchOrder(Order order) {
     }
 }
 
-bool OrderBook::cancelOrder(uint16_t orderId) {
+bool OrderBook::cancel_order(uint16_t orderId) {
     auto it = index.find(orderId);
     if(it == index.end()) return false; // order id does not exist
     
-    cancelByIterator(it);
+    cancel_by_iterator(it);
 
     return true;
 }
 
-void OrderBook::cancelByIterator(IndexIterator it) {
+void OrderBook::cancel_by_iterator(IndexIterator it) {
     OrderLocation& location =  it->second;
     if(location.side == BUY) {
-        auto itSide = bids.find(location.price); // get iterator for element in map
-        assert(itSide != bids.end()); // assert it exists
+        auto it_side = bids.find(location.price); // get iterator for element in map
+        assert(it_side != bids.end()); // assert it exists
         
-        itSide->second.erase(location.it); // delete from Order list
-        if(itSide->second.empty()) // if list becomes empty
+        it_side->second.erase(location.it); // delete from Order list
+        if(it_side->second.empty()) // if list becomes empty
         {
-            bids.erase(itSide); // delete price level from map
+            bids.erase(it_side); // delete price level from map
         }
     }
     else if(location.side == SELL) {
-        auto itSide = asks.find(location.price);
-        assert(itSide != asks.end());
+        auto it_side = asks.find(location.price);
+        assert(it_side != asks.end());
 
-        itSide->second.erase(location.it);
-        if(itSide->second.empty())
+        it_side->second.erase(location.it);
+        if(it_side->second.empty())
         {
-            asks.erase(itSide);
+            asks.erase(it_side);
         }
     }
 
     index.erase(it);
 }
 
-bool OrderBook::modifyQuantity(uint16_t orderId, uint32_t quantity) {
+bool OrderBook::modify_quantity(uint16_t orderId, uint32_t quantity) {
     if(quantity == 0) return false;
     
     auto it = index.find(orderId);
@@ -69,7 +69,7 @@ bool OrderBook::modifyQuantity(uint16_t orderId, uint32_t quantity) {
     uint64_t price = location.price;
     Side side = location.side;
 
-    cancelByIterator(it); // call cancel order to delete it from the book
+    cancel_by_iterator(it); // call cancel order to delete it from the book
 
     Order order = {
         orderId,
@@ -78,12 +78,12 @@ bool OrderBook::modifyQuantity(uint16_t orderId, uint32_t quantity) {
         quantity
     };
 
-    matchOrder(order);
+    match_order(order);
 
     return true;
 }
 
-bool OrderBook::modifyPrice(uint16_t orderId, uint64_t price) {
+bool OrderBook::modify_price(uint16_t orderId, uint64_t price) {
     if(price == 0) return false;
 
     auto it = index.find(orderId);
@@ -93,7 +93,7 @@ bool OrderBook::modifyPrice(uint16_t orderId, uint64_t price) {
     Side side = location.side;
     uint32_t quantity = location.it->quantity;
 
-    cancelByIterator(it);
+    cancel_by_iterator(it);
 
     Order order = {
         orderId,
@@ -102,7 +102,7 @@ bool OrderBook::modifyPrice(uint16_t orderId, uint64_t price) {
         quantity
     };
 
-    matchOrder(order);
+    match_order(order);
 
     return true;
 }
@@ -136,7 +136,7 @@ void OrderBook::insert(Order order) {
     }
 }
 
-Order OrderBook::matchBuy(Order order) {
+Order OrderBook::match_buy(Order order) {
     while(!asks.empty() && order.quantity > 0)
     {
         auto it = asks.begin();
@@ -154,9 +154,9 @@ Order OrderBook::matchBuy(Order order) {
         current.quantity -= match_qty;
 
         if(current.quantity == 0) { // ask order quantity == 0, then remove it from list
-            auto itIndex = index.find(current.id); // remove id from index map
-            assert(itIndex != index.end());
-            index.erase(itIndex);
+            auto it_index = index.find(current.id); // remove id from index map
+            assert(it_index != index.end());
+            index.erase(it_index);
             
             list.pop_front();
             if(list.empty())
@@ -168,7 +168,7 @@ Order OrderBook::matchBuy(Order order) {
     return order;
 }
 
-Order OrderBook::matchSell(Order order) {
+Order OrderBook::match_sell(Order order) {
     while(!bids.empty() && order.quantity > 0)
     {
         auto it = bids.begin();
@@ -186,9 +186,9 @@ Order OrderBook::matchSell(Order order) {
         current.quantity -= match_qty;
 
         if(current.quantity == 0) { // bid order quantity == 0, then remove it from list
-            auto itIndex = index.find(current.id); // remove id from index map
-            assert(itIndex != index.end());
-            index.erase(itIndex);
+            auto it_index = index.find(current.id); // remove id from index map
+            assert(it_index != index.end());
+            index.erase(it_index);
             
             list.pop_front();
             if(list.empty())
@@ -200,7 +200,7 @@ Order OrderBook::matchSell(Order order) {
     return order;
 }
 
-void OrderBook::printBids() {
+void OrderBook::print_bids() {
     std::cout << "\n---- BIDS ----\n" << std::endl;
     std::cout << "Price  |  Quantity" << std::endl;
     std::cout << "-------|----------" << std::endl;
@@ -216,7 +216,7 @@ void OrderBook::printBids() {
     }
 }
 
-void OrderBook::printAsks() {
+void OrderBook::print_asks() {
     std::cout << "\n---- ASKS ----\n" << std::endl;
     std::cout << "Price  |  Quantity" << std::endl;
     std::cout << "-------|----------" << std::endl;
@@ -237,7 +237,7 @@ bool OrderBook::empty() const {
     return false;
 }
 
-bool OrderBook::hasOrder(uint16_t orderId) const {
+bool OrderBook::has_order(uint16_t orderId) const {
     if(index.find(orderId) != index.end()) return true;
 
     return false;

@@ -2,8 +2,8 @@
 
 #include <map>
 #include <deque>
-#include "Order.hpp"
-#include "OrderLocation.hpp"
+#include "order.hpp"
+#include "order_location.hpp"
 
 using IndexIterator = std::map<uint16_t, OrderLocation>::iterator;
 
@@ -17,22 +17,22 @@ public:
     OrderBook(/* args */);
     ~OrderBook();
 
-    void matchOrder(Order order);
-    bool cancelOrder(uint16_t orderId);
-    bool modifyQuantity(uint16_t orderId, uint32_t quantity);
-    bool modifyPrice(uint16_t orderId, uint64_t price);
+    void match_order(Order order);
+    bool cancel_order(uint16_t orderId);
+    bool modify_quantity(uint16_t orderId, uint32_t quantity);
+    bool modify_price(uint16_t orderId, uint64_t price);
 
-    void printBids();
-    void printAsks();
+    void print_bids();
+    void print_asks();
 
     // helpers
     bool empty() const;
-    bool hasOrder(uint16_t orderId) const;
+    bool has_order(uint16_t orderId) const;
 
 private:
-    Order matchBuy(Order order);
-    Order matchSell(Order order);
+    Order match_buy(Order order);
+    Order match_sell(Order order);
 
     void insert(Order order);
-    void cancelByIterator(IndexIterator it);
+    void cancel_by_iterator(IndexIterator it);
 };

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "OrderBook.hpp"
+#include "order_book.hpp"
 
 int main() {
 
@@ -15,7 +15,7 @@ int main() {
 
     // create instance of OrderBook
     std::cout << "Initializing Order Book..." << std::endl;
-    OrderBook orderBook;
+    OrderBook order_book;
 
     // create fake orders
     int num = 50;
@@ -28,12 +28,12 @@ int main() {
             static_cast<uint32_t>(50 + (i%5) * 5) // quantity
         };
         
-        orderBook.matchOrder(order);
+        order_book.match_order(order);
     }
     std::cout << "Created " << num << " orders" << std::endl;
 
-    orderBook.printBids();
-    orderBook.printAsks();
+    order_book.print_bids();
+    order_book.print_asks();
 
     return 0;
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <list>
-#include "Order.hpp"
+#include "order.hpp"
 
 struct OrderLocation {
     Side side;
