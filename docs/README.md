@@ -45,5 +45,5 @@
 - measure "time per match", "time per insert", "time per cancel"
 - preserve invariants (price-time priority, deterministic)
 ----------------------------------
-- [ ] Measure times
-- [ ] Optimize for Flat price levels + intrusive FIFO
+- [x] Measure times
+- [x] Optimize for Flat price levels + intrusive FIFO

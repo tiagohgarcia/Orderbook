@@ -2,8 +2,6 @@
 #include <cstdint>
 #include <vector>
 #include <iostream>
-#include <cassert>
-
 #include "../src/order_book.hpp"
 
 using Clock = std::chrono::steady_clock;
@@ -51,12 +49,42 @@ static void print_stats(const char* name, const Stats& s) {
 
 Stats benchmark_match(size_t depth, uint32_t qty_each) {
     const uint64_t price = 100;
-    const size_t iters = 300;   // start small, scale later
+    const size_t warmup_iters = 100;
+    const size_t measure_iters = 1000;
+
+    const size_t total = depth * (size_t)qty_each;
+     if (total > std::numeric_limits<uint32_t>::max()) std::abort();
+    const uint32_t total_qty = static_cast<uint32_t>(total);
+
+    // ---- warmup ----
+    for (size_t i = 0; i < warmup_iters; ++i) {
+        OrderBook book;
+
+        for (uint32_t j = 0; j < depth; ++j) {
+            Order sell {
+                static_cast<uint16_t>(j),
+                SELL,
+                price,
+                qty_each
+            };
+            book.match_order(sell);
+        }
+
+        Order buy {
+            9999,
+            BUY,
+            UINT64_MAX,
+            total_qty
+        };
+
+        book.match_order(buy);
+    }
+    // ---- warmup ----
 
     std::vector<uint64_t> samples;
-    samples.reserve(iters);
+    samples.reserve(measure_iters);
 
-    for (size_t i = 0; i < iters; ++i) {
+    for (size_t i = 0; i < measure_iters; ++i) {
         OrderBook book;
 
         // preload one deep FIFO
@@ -69,10 +97,6 @@ Stats benchmark_match(size_t depth, uint32_t qty_each) {
             };
             book.match_order(sell); // rests
         }
-
-        size_t total = depth * qty_each;
-        assert(total <= std::numeric_limits<uint32_t>::max());
-        uint32_t total_qty = static_cast<uint32_t>(total);
 
         Order buy {
             9999,

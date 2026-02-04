@@ -4,15 +4,15 @@
 #include <deque>
 #include "order.hpp"
 #include "order_location.hpp"
+#include "price_level.hpp"
 
 using IndexIterator = std::map<uint16_t, OrderLocation>::iterator;
 
 class OrderBook {
 private:
-    std::map<uint64_t, std::list<Order>> asks; // sell orders
-    std::map<uint64_t, std::list<Order>, std::greater<>> bids; // buy orders
-    std::map<uint16_t, OrderLocation> index;
-
+    std::map<uint64_t, PriceLevel> asks; // sell orders map<Price, PriceLevel>
+    std::map<uint64_t, PriceLevel, std::greater<>> bids; // buy orders map<Price, PriceLevel>
+    std::map<uint16_t, OrderLocation> index; // map<order_id, OrderLocation>
 public:
     OrderBook(/* args */);
     ~OrderBook();

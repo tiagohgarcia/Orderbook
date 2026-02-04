@@ -93,7 +93,7 @@ void test_modify_price_resting_order() {
     };
     
     book.match_order(order4);
-    
+
     assert(!book.has_order(order1.id));
     assert(book.empty());
 }

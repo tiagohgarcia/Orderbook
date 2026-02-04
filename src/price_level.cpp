@@ -1,5 +1,4 @@
 #include <cassert>
-
 #include "price_level.hpp"
 
 PriceLevel::PriceLevel()
@@ -47,6 +46,10 @@ Order* PriceLevel::pop_front() {
     return old_head;
 }
 
+Order* PriceLevel::front() const {
+    return head;
+}
+
 void PriceLevel::remove(Order* order) {
     assert((head == nullptr) == (tail == nullptr)); // debug
     
@@ -74,4 +77,8 @@ void PriceLevel::remove(Order* order) {
 
     if(head) head->prev = nullptr;
     if(tail) tail->next = nullptr;
+}
+
+bool PriceLevel::empty() {
+    return head == nullptr;
 }

@@ -98,21 +98,16 @@ Unacceptable:
 
 **Questions to answer:**
 Q: Which operation improved the most?
-A:
+A: Match operation
 
 Q: Which got worse?
-A:
+A: Match operation at 100 depth
 
 Q: Did tail latency improve?
-A:
+A: yes
 
 Q: Was deterministic preserved?
-A:
-
-| Before | After |
-| ----------- | ----------- |
-|  |  |
-|  |  |
+A: yes
 
 ## Non-goals of Phase 3
 

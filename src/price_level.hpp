@@ -13,7 +13,9 @@ public:
 
     void push_back(Order* order);
     Order* pop_front();
+    Order* front() const;
     void remove(Order* order);
+    bool empty();
 };
 
 
