@@ -1,6 +1,5 @@
 # Orderbook
 
-
 ## Data Model
 
 ### Order
