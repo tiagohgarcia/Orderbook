@@ -4,7 +4,7 @@ CXXFLAGSASAN = -O0 -g -fno-omit-frame-pointer -fsanitize=address,undefined
 
 SRC = src/order_book.cpp src/price_level.cpp
 TESTS = tests/test_main.cpp tests/test_cancel.cpp tests/test_modify.cpp
-BENCH = benchmarks/bench_order_book.cpp
+BENCH = benchmarks/bench_order_book.cpp benchmarks/alloc_guard.cpp
 
 TESTSFILE = test_order_book
 TESTSASAN = test_asan
@@ -17,7 +17,7 @@ test: $(TESTSFILE)
 	./$(TESTSFILE)
 	
 
-$(TESTSASAN): $(SRC) $(TESTS)
+$(TESTSASAN): $(SRC) $(BENCH)
 	$(CXX) $(CXXFLAGS) $(CXXFLAGSASAN) $^ -o $@
 
 testAsan: $(TESTSASAN)

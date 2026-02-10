@@ -2,9 +2,13 @@
 #include <cstdint>
 #include <vector>
 #include <iostream>
+#include <atomic>
 #include "../src/order_book.hpp"
 
 using Clock = std::chrono::steady_clock;
+
+extern std::atomic<uint64_t> g_new_calls;
+extern std::atomic<bool> g_guard_on;
 
 struct Stats {
     double p50_us = 0;
@@ -56,6 +60,8 @@ Stats benchmark_match(size_t depth, uint32_t qty_each) {
      if (total > std::numeric_limits<uint32_t>::max()) std::abort();
     const uint32_t total_qty = static_cast<uint32_t>(total);
 
+    g_guard_on = false; // debug
+
     // ---- warmup ----
     for (size_t i = 0; i < warmup_iters; ++i) {
         OrderBook book;
@@ -80,6 +86,9 @@ Stats benchmark_match(size_t depth, uint32_t qty_each) {
         book.match_order(buy);
     }
     // ---- warmup ----
+
+    g_new_calls = 0; // debug
+    g_guard_on = true; // debug
 
     std::vector<uint64_t> samples;
     samples.reserve(measure_iters);
@@ -113,6 +122,9 @@ Stats benchmark_match(size_t depth, uint32_t qty_each) {
             std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count()
         );
     }
+
+    g_guard_on = false; // debug  
+    std::cout << "!! Allocations: " << g_new_calls << " !!" << std::endl;
 
     return compute_stats(samples);
 }
